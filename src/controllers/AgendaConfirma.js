@@ -36,7 +36,7 @@ module.exports = {
                 nomeCliente,
                 tellCliente,
                 tamanhoTattoo,
-                estOrcamento,
+                estOrcamento,      
                 dataTattoo,
                 hTattoo,
                 hTerminoTattoo,
@@ -56,6 +56,8 @@ module.exports = {
 
     async updateAgenda(req, res){
         const { id } = req.params;
+
+        http://localhost:3000/agenda/updateAgenda/
 
         const {
             idCliente,

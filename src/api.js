@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const agendaRoutes = require('./router');
 const agendaConRoutes = require('./router');
+const adminRoutes = require('./router');
+const adminConRoutes = require('./router');
 
 app.use(express.json()); // Middleware para lidar com solicitações JSON
 
