@@ -57,8 +57,6 @@ module.exports = {
     async updateAgenda(req, res){
         const { id } = req.params;
 
-        http://localhost:3000/agenda/updateAgenda/
-
         const {
             idCliente,
             idAdmin,
