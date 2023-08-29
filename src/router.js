@@ -7,6 +7,7 @@ const adminConController = require('./controllers/Admin');
 const estoqueConController = require('./controllers/Estoque');
 
 const portifolioController = require('./controllers/Portifolio');
+const portfolioController = require('./controllers/Portfolio');
 
 //Rotas Agenda Confirma
 router.post('/createAgenda', agendaController.createAgenda);
@@ -36,5 +37,11 @@ router.post('/createItemEstoque', estoqueConController.createItemEstoque);
 router.get('/selectItemEstoque', estoqueConController.getAllEstoque);
 router.put('/updateItemEstoque/:id', estoqueConController.updateItemEstoque);
 router.delete('/deleteItemEstoque/:id', estoqueConController.deleteItemEstoque)
+
+//Rotas Portfólio
+router.post('/createPortfolio', portfolioController.createPortfolio);
+router.get('/selectPortfolio', portfolioController.getAllPortfolio);
+router.put('/updatePortfolio/:id', portfolioController.updatePortfolio);
+router.delete('/deletePortfolio/:id', portfolioController.deletePortfolio);
 
 module.exports = router;

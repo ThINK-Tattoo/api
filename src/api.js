@@ -5,6 +5,7 @@ const agendaConRoutes = require('./router');
 const adminRoutes = require('./router');
 const estoqueRoutes = require('./router');
 
+const portfolioRoutes = require('./router')
 
 app.use(express.json()); // Middleware para lidar com solicitações JSON
 
@@ -14,6 +15,7 @@ app.use('/agenda', agendaRoutes);
 app.use('/agendaConsulta', agendaConRoutes);
 app.use('/estoque', estoqueRoutes);
 app.use('/admin', adminRoutes);
+app.use('/portfolio', portfolioRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
