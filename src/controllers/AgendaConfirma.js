@@ -36,7 +36,7 @@ module.exports = {
                 nomeCliente,
                 tellCliente,
                 tamanhoTattoo,
-                estOrcamento,
+                estOrcamento,      
                 dataTattoo,
                 hTattoo,
                 hTerminoTattoo,
