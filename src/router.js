@@ -3,11 +3,10 @@ const express = require('express');
 const router = express.Router();
 const agendaConController = require('./controllers/AgendaConsulta');
 const agendaController = require('./controllers/AgendaConfirma');
-const adminConController = require('./controllers/Admin');
+const adminController = require('./controllers/Admin');
+const portfolioController = require('./controllers/Portfolio');
 const estoqueConController = require('./controllers/Estoque');
 const clienteController = require('./controllers/Cliente');
-const portifolioController = require('./controllers/Portifolio');
-const portfolioController = require('./controllers/Portfolio');
 
 //Rotas Agenda Confirma
 router.post('/createAgenda', agendaController.createAgenda);
@@ -22,28 +21,22 @@ router.put('/updateAgendaCon/:id', agendaConController.updateAgendaConsulta);
 router.delete('/deleteAgendaCon/:id', agendaConController.deleteAgendaConsulta);
 
 //Rotas Admin
-router.post('/createAdmin', adminConController.createAdmin);
-router.get('/selectAdmin', adminConController.getAllAdmin);
-router.put('/updateAdmin/:id', adminConController.updateAdmin);
-router.delete('/deleteAdmin/:id', adminConController.deleteAdmin); 
-
-//Rotas Portifólio
-router.post('/createPortifolio', portifolioController.createPortifolio);
-router.get('/selectPortifolio', portifolioController.getAllPortifolio);
-router.put('/updatePortifolio/:id', portifolioController.updatePortifolio);
-router.delete('/deletePortifolio/:id', portifolioController.deletePortifolio);
-
-// Rotas Estoque
-router.post('/createItemEstoque', estoqueConController.createItemEstoque);
-router.get('/selectItemEstoque', estoqueConController.getAllEstoque);
-router.put('/updateItemEstoque/:id', estoqueConController.updateItemEstoque);
-router.delete('/deleteItemEstoque/:id', estoqueConController.deleteItemEstoque);
+router.post('/createAdmin', adminController.createAdmin);
+router.get('/selectAdmin', adminController.getAllAdmin);
+router.put('/updateAdmin/:id', adminController.updateAdmin);
+router.delete('/deleteAdmin/:id', adminController.deleteAdmin); 
 
 //Rotas Portfólio
 router.post('/createPortfolio', portfolioController.createPortfolio);
 router.get('/selectPortfolio', portfolioController.getAllPortfolio);
 router.put('/updatePortfolio/:id', portfolioController.updatePortfolio);
 router.delete('/deletePortfolio/:id', portfolioController.deletePortfolio);
+
+// Rotas Estoque
+router.post('/createItemEstoque', estoqueConController.createItemEstoque);
+router.get('/selectItemEstoque', estoqueConController.getAllEstoque);
+router.put('/updateItemEstoque/:id', estoqueConController.updateItemEstoque);
+router.delete('/deleteItemEstoque/:id', estoqueConController.deleteItemEstoque);
 
 //Rotas Cliente
 router.post('/createCliente', clienteController.createCliente);

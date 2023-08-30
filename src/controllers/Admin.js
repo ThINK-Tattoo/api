@@ -4,7 +4,7 @@ module.exports = {
     async getAllAdmin(req, res){
         try{
             const admin = await db('admin').select('*');
-            res.status(200).json(agenda);
+            res.status(200).json(admin);
 
         }catch(err){
             console.error('Erro ao buscar administradores: ', err);
@@ -18,7 +18,7 @@ module.exports = {
             nome,
             email,
             telefone,
-            senha,
+            senha
         } = req.body;
 
         try{ 
@@ -27,7 +27,7 @@ module.exports = {
                 nome,
                 email,
                 telefone,
-                senha, 
+                senha
             });
 
             res.status(201).json({id, message: 'Admin adicionado com sucesso.'});
@@ -46,7 +46,7 @@ module.exports = {
             nome,
             email,
             telefone,
-            senha,
+            senha
         } = req.body;
 
         try{
@@ -57,7 +57,7 @@ module.exports = {
                 nome,
                 email,
                 telefone,
-                senha,
+                senha
             });
             res.status(200).json({ message: 'Admin cadastrado atualizado com sucesso.' });
             } catch (err) {

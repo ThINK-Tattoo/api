@@ -1,7 +1,7 @@
 const db = require('../database/db');
 
 module.exports = {
-    async getAllClientes(req, res){
+    async getAllCliente(req, res){
         try{
             const cliente = await db('cliente').select('*');
             res.status(200).json(cliente);

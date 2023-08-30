@@ -26,7 +26,6 @@ module.exports = {
                 descricao
             });
             res.status(200).json({ message: 'Imagem inserida com sucesso no portfólio'});
-            console.log('Erro ao adicionar imagem ao portfólio: ', idAdmin, imagem, descricao);
     
         }catch(err){
             console.error('Erro ao adicionar imagem ao portfólio: ', err);
