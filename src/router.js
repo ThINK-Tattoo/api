@@ -7,6 +7,7 @@ const adminController = require('./controllers/Admin');
 const portfolioController = require('./controllers/Portfolio');
 const estoqueConController = require('./controllers/Estoque');
 const clienteController = require('./controllers/Cliente');
+const flashTattooController = require('./controllers/FlashTatto');
 
 //Rotas Agenda Confirma
 router.post('/createAgenda', agendaController.createAgenda);
@@ -43,5 +44,11 @@ router.post('/createCliente', clienteController.createCliente);
 router.get('/selectCliente', clienteController.getAllCliente);
 router.put('/updateCliente/:id', clienteController.updateCliente);
 router.delete('/deleteCliente/:id', clienteController.deleteCliente);
+
+//Rotas Flash Tattoo
+router.post('/createFlashTattoo', flashTattooController.createFlashTattoo);
+router.get('/selectFlashTatto', flashTattooController.getAllFlashTattoo);
+router.put('/updateFlashTattoo/:id', flashTattooController.updateFlashTattoo);
+router.delete('/deleteFlashTattoo/:id', flashTattooController.deleteFlashTattoo);
 
 module.exports = router;

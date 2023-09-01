@@ -1,4 +1,5 @@
 const express = require('express');
+const flashTattoRoutes = require('./router');
 const app = express();
 const agendaRoutes = require('./router');
 const agendaConRoutes = require('./router');
@@ -13,6 +14,7 @@ app.use('/agenda', agendaRoutes);
 app.use('/agendaConsulta', agendaConRoutes);
 app.use('/portfolio', portfolioRoutes);
 app.use('/admin', adminRoutes);
+app.use('/flashTatto', flashTattoRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
