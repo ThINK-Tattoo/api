@@ -6,8 +6,13 @@ const agendaController = require('./controllers/AgendaConfirma');
 const adminController = require('./controllers/Admin');
 const portfolioController = require('./controllers/Portfolio');
 const estoqueConController = require('./controllers/Estoque');
+<<<<<<< HEAD
 const clientesController = require('./controllers/clientes');
 
+=======
+const clienteController = require('./controllers/Cliente');
+const flashTattooController = require('./controllers/FlashTatto');
+>>>>>>> 78213ca05bc270264d59402a44a2500a8269fe0f
 
 //Rotas Agenda Confirma
 router.post('/createAgenda', agendaController.createAgenda);
@@ -44,5 +49,11 @@ router.post('/createclientes', clientesController.createclientes);
 router.get('/selectclientes', clientesController.getAllclientes);
 router.put('/updateclientes/:id', clientesController.updateclientes);
 router.delete('/deleteclientes/:id', clientesController.deleteclientes);
+
+//Rotas Flash Tattoo
+router.post('/createFlashTattoo', flashTattooController.createFlashTattoo);
+router.get('/selectFlashTatto', flashTattooController.getAllFlashTattoo);
+router.put('/updateFlashTattoo/:id', flashTattooController.updateFlashTattoo);
+router.delete('/deleteFlashTattoo/:id', flashTattooController.deleteFlashTattoo);
 
 module.exports = router;
