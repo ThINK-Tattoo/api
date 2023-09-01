@@ -1,10 +1,10 @@
-const express = require('../database/db');
+const db = require('../database/db');
 
 module.exports = {
     async getAllAdmin(req, res){
         try{
             const admin = await db('admin').select('*');
-            res.status(200).json(agenda);
+            res.status(200).json(admin);
 
         }catch(err){
             console.error('Erro ao buscar administradores: ', err);
@@ -14,20 +14,18 @@ module.exports = {
 
     async createAdmin(req, res){
         const {
-            idAdmin,
             nome,
             email,
             telefone,
-            senha,
+            senha
         } = req.body;
 
         try{ 
             const [id] = await db('admin').insert({
-                idAdmin,
                 nome,
                 email,
                 telefone,
-                senha, 
+                senha
             });
 
             res.status(201).json({id, message: 'Admin adicionado com sucesso.'});
@@ -42,39 +40,37 @@ module.exports = {
         const { id } = req.params;
 
         const {
-            idAdmin,
             nome,
             email,
             telefone,
-            senha,
+            senha
         } = req.body;
 
         try{
             await db('admin')
             .where({id})
             .update({
-                idAdmin,
                 nome,
                 email,
                 telefone,
-                senha,
+                senha
             });
-            res.status(200).json({ message: 'Admin cadastrado atualizado com sucesso.' });
+            res.status(200).json({ message: 'Admin atualizado com sucesso.' });
             } catch (err) {
-                console.error('Erro ao atualizar admin cadastrado: ', err);
+                console.error('Erro ao atualizar admin: ', err);
                 res.status(500).json({ message: 'Erro ao atualizar o admin cadastrado.' }); 
             }
         }, 
 
-        async deleteAdmin(re, res){
+        async deleteAdmin(req, res){
             const {id} = req.params;
 
             try{
                 await db('admin').where({id}).del();
-                res.status(200).json({ message: 'Admin cadastrado excluído com sucesso.' });
+                res.status(200).json({ message: 'Admin excluído com sucesso.' });
             } catch (err) {
-                console.error('Erro ao excluir admin cadastrado: ', err);
-                res.status(500).json({ message: 'Erro ao excluir admin cadastrado.' });
+                console.error('Erro ao excluir admin: ', err);
+                res.status(500).json({ message: 'Erro ao excluir admin.' });
             }
             }
         }
