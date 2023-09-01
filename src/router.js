@@ -1,4 +1,4 @@
-// clienteRoutes.js
+// clientesRoutes.js
 const express = require('express');
 const router = express.Router();
 const agendaConController = require('./controllers/AgendaConsulta');
@@ -6,7 +6,8 @@ const agendaController = require('./controllers/AgendaConfirma');
 const adminController = require('./controllers/Admin');
 const portfolioController = require('./controllers/Portfolio');
 const estoqueConController = require('./controllers/Estoque');
-const clienteController = require('./controllers/Cliente');
+const clientesController = require('./controllers/clientes');
+
 
 //Rotas Agenda Confirma
 router.post('/createAgenda', agendaController.createAgenda);
@@ -38,10 +39,10 @@ router.get('/selectItemEstoque', estoqueConController.getAllEstoque);
 router.put('/updateItemEstoque/:id', estoqueConController.updateItemEstoque);
 router.delete('/deleteItemEstoque/:id', estoqueConController.deleteItemEstoque);
 
-//Rotas Cliente
-router.post('/createCliente', clienteController.createCliente);
-router.get('/selectCliente', clienteController.getAllCliente);
-router.put('/updateCliente/:id', clienteController.updateCliente);
-router.delete('/deleteCliente/:id', clienteController.deleteCliente);
+//Rotas clientes
+router.post('/createclientes', clientesController.createclientes);
+router.get('/selectclientes', clientesController.getAllclientes);
+router.put('/updateclientes/:id', clientesController.updateclientes);
+router.delete('/deleteclientes/:id', clientesController.deleteclientes);
 
 module.exports = router;

@@ -14,10 +14,10 @@ module.exports = {
 
     async createAgenda(req, res){
         const {
-            idCliente,
+            idclientes,
             idAdmin,
-            nomeCliente,
-            tellCliente,
+            nomeclientes,
+            tellclientes,
             tamanhoTattoo,
             estOrcamento,
             dataTattoo,
@@ -31,10 +31,10 @@ module.exports = {
 
         try{
             const [id] = await db('confirmaagenda').insert({
-                idCliente,
+                idclientes,
                 idAdmin,
-                nomeCliente,
-                tellCliente,
+                nomeclientes,
+                tellclientes,
                 tamanhoTattoo,
                 estOrcamento,      
                 dataTattoo,
@@ -58,10 +58,10 @@ module.exports = {
         const { id } = req.params;
 
         const {
-            idCliente,
+            idclientes,
             idAdmin,
-            nomeCliente,
-            tellCliente,
+            nomeclientes,
+            tellclientes,
             tamanhoTattoo,
             estOrcamento,
             dataTattoo,
@@ -77,10 +77,10 @@ module.exports = {
             await db('confirmaagenda')
             .where({id})
             .update({
-                idCliente,
+                idclientes,
                 idAdmin,
-                nomeCliente,
-                tellCliente,
+                nomeclientes,
+                tellclientes,
                 tamanhoTattoo,
                 estOrcamento,
                 dataTattoo,

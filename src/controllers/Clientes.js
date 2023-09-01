@@ -1,18 +1,18 @@
 const db = require('../database/db');
 
 module.exports = {
-    async getAllCliente(req, res){
+    async getAllclientes(req, res){
         try{
-            const cliente = await db('cliente').select('*');
-            res.status(200).json(cliente);
+            const clientes = await db('clientes').select('*');
+            res.status(200).json(clientes);
 
         }catch(err){
-            console.error('Clientes não encontrados', err);
-            res.status(500).json({message: "Clientes não encontrados"});
+            console.error('clientes não encontrados', err);
+            res.status(500).json({message: "clientes não encontrados"});
         }
     },
 
-    async createCliente(req, res){
+    async createclientes(req, res){
         const {
             nome,
             telefone,
@@ -22,7 +22,7 @@ module.exports = {
         } = req.body;
 
         try{
-            const[id] = await db('cliente').insert({
+            const[id] = await db('clientes').insert({
                 nome,
                 telefone,
                 email,
@@ -30,7 +30,7 @@ module.exports = {
                 senha
             });
 
-            res.status(201).json({id, message: 'Cliente cadastrado.'});
+            res.status(201).json({id, message: 'cliente cadastrado.'});
 
         }catch(err){
             console.error('erro ao cadastrar o cliente', err);
@@ -38,7 +38,7 @@ module.exports = {
         }
     },
 
-    async updateCliente(req,res){
+    async updateclientes(req,res){
         const { id } = req.params;
 
         const {
@@ -50,7 +50,7 @@ module.exports = {
         } = req.body;
 
         try{
-            await db('cliente')
+            await db('clientes')
             .where({id})
             .update({
                 nome,
@@ -66,11 +66,11 @@ module.exports = {
         }
     },
 
-    async deleteCliente(req, res){
+    async deleteclientes(req, res){
         const {id} = req.params;
 
         try{
-            await db('cliente').where({id}).del();
+            await db('clientes').where({id}).del();
             res.status(200).json({ message: 'Dados do cliente deletados com sucesso'});
         } catch (err) {
             console.error('Houve um erro ao deletar os dados do cliente.', err);
