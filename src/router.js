@@ -4,9 +4,8 @@ const router = express.Router();
 const agendaConController = require('./controllers/AgendaConsulta');
 const agendaController = require('./controllers/AgendaConfirma');
 const adminConController = require('./controllers/Admin');
-const estoqueConController = require('./controllers/Estoque');
-
-const portifolioController = require('./controllers/Portifolio');
+const estoqueController = require('./controllers/Estoque');
+const movimentacaoEstoque = require ('./controllers/MovimentacaoEstoque');
 const portfolioController = require('./controllers/Portfolio');
 
 //Rotas Agenda Confirma
@@ -27,21 +26,27 @@ router.get('/selectAdmin', adminConController.getAllAdmin);
 router.put('/updateAdmin/:id', adminConController.updateAdmin);
 router.delete('/deleteAdmin/:id', adminConController.deleteAdmin); 
 //Rotas Portifólio
-router.post('/createPortifolio', portifolioController.createPortifolio);
-router.get('/selectPortifolio', portifolioController.getAllPortifolio);
-router.put('/updatePortifolio/:id', portifolioController.updatePortifolio);
-router.delete('/deletePortifolio/:id', portifolioController.deletePortifolio);
+router.post('/createPortfolio', portfolioController.createPortfolio);
+router.get('/selectPortfolio', portfolioController.getAllPortfolio);
+router.put('/updatePortfolio/:id', portfolioController.updatePortfolio);
+router.delete('/deletePortfolio/:id', portfolioController.deletePortfolio);
 
 // Rotas Estoque
-router.post('/createItemEstoque', estoqueConController.createItemEstoque);
-router.get('/selectItemEstoque', estoqueConController.getAllEstoque);
-router.put('/updateItemEstoque/:id', estoqueConController.updateItemEstoque);
-router.delete('/deleteItemEstoque/:id', estoqueConController.deleteItemEstoque)
+router.post('/createItemEstoque', estoqueController.createItemEstoque);
+router.get('/selectItemEstoque', estoqueController.getAllEstoque);
+router.put('/updateItemEstoque/:id', estoqueController.updateItemEstoque);
+router.delete('/deleteItemEstoque/:id', estoqueController.deleteItemEstoque)
 
 //Rotas Portfólio
 router.post('/createPortfolio', portfolioController.createPortfolio);
 router.get('/selectPortfolio', portfolioController.getAllPortfolio);
 router.put('/updatePortfolio/:id', portfolioController.updatePortfolio);
 router.delete('/deletePortfolio/:id', portfolioController.deletePortfolio);
+
+//Rotas Movimentacao Estoque
+router.post('/createMovimentacaoEstoque', movimentacaoEstoque.createMovimentacaoHistorico);
+router.get('/selectMovimentacaoEstoque', movimentacaoEstoque.getAllMovimentacaoHistorico);
+router.delete('/deleteMovimentacaoEstoque/:id', movimentacaoEstoque.deleteMovimentacaoHistorico);
+router.delete('/deleteTodaMovimentacaoEstoque', movimentacaoEstoque.deleteTodasMovimentacoesEHistorico);
 
 module.exports = router;
