@@ -138,17 +138,18 @@ module.exports = {
             const result = await db('token').where({token}).select('*');
 
             if(result.length < 1){
+                console.log('Token válido: ' + validToken);
                 res.status(200).json({ message: "Token inválido", validToken: false });
-                console.err('Token válido: ' + validToken);
             }
             else{
-                res.status(200).json({ message: "Token válido, redirecionando para redefinir senha", validToken: true });
+                await db('token').where({token}).del();
                 validToken = true;
                 console.log('Token válido: ' + validToken);
+                res.status(200).json({ message: "Token válido, redirecionando para redefinir senha", validToken: true });
             }
 
         }catch(err){
-            console.err("Erro ao verificar token ", err);
+            console.error("Erro ao verificar token ", err);
             res.status(500).json({message: "Algo deu errado ao verificar o token"});
         }
     },
@@ -162,10 +163,11 @@ module.exports = {
                 res.status(400).json({message: "Senhas diferentes, as duas senhas precisam ser iguais"});
             } else{
                 await db('cliente').where({email}).update({senha});
+                
                 res.status(200).json({message: "Senha redefinida com sucesso"});
             }
         }catch(err){
-            console.log("Erro ao redefinir a senha do usuário", err);
+            console.error("Erro ao redefinir a senha do usuário", err);
             res.status(500).json({message: "Algo deu errado ao redefinir a senha"});
         }
     }
