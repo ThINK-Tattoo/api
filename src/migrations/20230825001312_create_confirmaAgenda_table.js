@@ -15,7 +15,7 @@ exports.up = function(knex) {
     table.string('status');
     table.string('tipoTattoo');
 
-    table.foreign('idCliente').references('id').inTable('clientes');
+    table.foreign('idCliente').references('id').inTable('cliente');
     table.foreign('idAdmin').references('id').inTable('admin');
   })
 };

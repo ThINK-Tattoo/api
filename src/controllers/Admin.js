@@ -16,7 +16,7 @@ module.exports = {
         const {
             nome,
             email,
-            telefone,
+            fotoPerfil,
             senha
         } = req.body;
 
@@ -24,7 +24,7 @@ module.exports = {
             const [id] = await db('admin').insert({
                 nome,
                 email,
-                telefone,
+                fotoPerfil,
                 senha
             });
 
@@ -42,7 +42,7 @@ module.exports = {
         const {
             nome,
             email,
-            telefone,
+            fotoPerfil,
             senha
         } = req.body;
 
@@ -52,7 +52,7 @@ module.exports = {
             .update({
                 nome,
                 email,
-                telefone,
+                fotoPerfil,
                 senha
             });
             res.status(200).json({ message: 'Admin atualizado com sucesso.' });
