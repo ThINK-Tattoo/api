@@ -8,6 +8,7 @@ const portfolioController = require('./controllers/Portfolio');
 const estoqueConController = require('./controllers/Estoque');
 const historicoController = require('./controllers/MovimentacaoEstoque');
 const clienteController = require('./controllers/Cliente');
+const confirmaClienteController = require('./controllers/ConfirmaCliente');
 const flashTattooController = require('./controllers/FlashTatto');
 
 //Rotas Agenda Confirma
