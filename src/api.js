@@ -10,6 +10,7 @@ const clienteRoutes = require('./router');
 const flashTattoRoutes = require('./router');
 const historicoRoutes = require('./router');
 const estoqueRoutes = require('./router');
+const confirmaCliente = require ('./router');
 
 app.use(express.json()); 
 
@@ -22,6 +23,8 @@ app.use('/historico', historicoRoutes);
 app.use('/estoque', estoqueRoutes);
 app.use('/admin', adminRoutes);
 app.use('/flashTatto', flashTattoRoutes);
+
+app.use('/confirmaCliente', confirmaCliente);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

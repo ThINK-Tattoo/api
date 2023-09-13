@@ -62,4 +62,8 @@ router.get('/selectFlashTattoo', flashTattooController.getAllFlashTattoo);
 router.put('/updateFlashTattoo/:id', flashTattooController.updateFlashTattoo);
 router.delete('/deleteFlashTattoo/:id', flashTattooController.deleteFlashTattoo);
 
+//Rotas Confirma Cliente
+router.post('/createConfirmaCliente', confirmaClienteController.createConfirmaClientes);
+router.post('/verifyTokenConfirmaCleinte', confirmaClienteController.verifyTokenConfirmaCliente);
+
 module.exports = router;

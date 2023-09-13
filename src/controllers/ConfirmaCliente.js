@@ -23,7 +23,7 @@ module.exports = {
         } = req.body;
 
         try{
-            const results = await db('confiraCliente')
+            const results = await db('confirmaCliente')
             .where({email})
             .select('*');
 
@@ -36,16 +36,32 @@ module.exports = {
                 res.status(400).json({ message: 'O cliente precisa ter mais de 18 para poder usar nosso sistema' });
             }
             else{
-                //AQUI A GNETE VAI FAZER A  PARADA DO TOKEN, EBA
-                const[id] = await db('confirmaCliente').insert({
+                const [id] = await db('confirmaCliente').insert({
                     nome,
                     telefone,
                     email,
                     idade,
                     senha
                 });
-    
-                res.status(201).json({id, message: 'cliente cadastrado.'});
+                
+                const token = crypto.randomBytes(4).toString('hex');
+                
+                await db('token').insert({
+                    idCliente: id, // Use o id obtido na inserção anterior
+                    token
+                });
+                
+                await transporter.sendMail({
+                    from: 'think.studio.tattoo@gmail.com',
+                    to: email,
+                    subject: 'Criação de Conta',
+                    text: `Seu código de criação de conta é: ${token}`,
+                });
+
+                res.status(200).json({message: 'Código de confirmação de conta enviado'})
+
+
+
             }
             
         }catch(err){
@@ -54,40 +70,78 @@ module.exports = {
         }
     },
 
+    async verifyTokenConfirmaCliente(req, res) {
+        const { token } = req.body;
+        try {
+            const tokenData = await db('token').where({ token }).first();
+    
+            if (!tokenData) {
+                res.status(200).json({ message: "Token inválido" });
+            } else {
+                const idClienteToken = tokenData.idCliente;
+    
+                const {
+                    nome,
+                    telefone,
+                    email,
+                    idade,
+                    senha
+                } = await db('confirmaCliente').where({ id: idClienteToken }).first();
+    
+                const [id] = await db('cliente').insert({
+                    nome,
+                    telefone,
+                    email,
+                    idade,
+                    senha
+                });
+    
+                await db('token').where({ token }).del();
+                await db('confirmaCliente').where({ id: idClienteToken }).del();
+    
+                res.status(200).json({ message: "Token válido, redirecionando para redefinir senha" });
+            }
+        } catch (err) {
+            console.error("Erro ao verificar token ", err);
+            res.status(500).json({ message: "Algo deu errado ao verificar o token" });
+        }
+    },
+    
     
 
-    async deleteConfirmaClientes(req, res){
-        const {id} = req.params;
+    // async verifyTokenConfirmaCliente(req, res){
+    //     const { token } = req.body;
+    //     try{
+    //         const result = await db('token').where({token}).select('*');
 
-        try{
-            await db('connfirmaCliente').where({id}).del();
-            res.status(200).json({ message: 'Dados do cliente deletados com sucesso'});
-        } catch (err) {
-            console.error('Houve um erro ao deletar os dados do cliente.', err);
-            res.status(500).json({ message: 'Houve um erro ao deletar os dados do cliente.' });
-        }
-    },
+    //         if(result.length < 1){
+    //             res.status(200).json({ message: "Token inválido" });
+    //         }
+    //         else{
+    //             const idClienteToken = await db('token').where({token}).select('idCliente');
+    //             const{
+    //                 nome,
+    //                 telefone,
+    //                 email,
+    //                 idade,
+    //                 senha
+    //             } = await db ('confirmaCliente').where({id:idClienteToken}).select('*');
+    //             const[id] = await db('cliente').insert({
+    //                 nome,
+    //                 telefone,
+    //                 email,
+    //                 idade,
+    //                 senha
+    //             });
+    //             await db('token').where({token}).del();
+    //             await db('confirmaCliente').where({id:idClienteToken}).del();
+    //             res.status(200).json({ message: "Token válido, redirecionando para redefinir senha"});
+            
+    //         }
 
-    async verifyToken(req, res){
-        const { token } = req.body;
-        const validToken = false;
-        try{
-            const result = await db('token').where({token}).select('*');
-
-            if(result.length < 1){
-                console.log('Token válido: ' + validToken);
-                res.status(200).json({ message: "Token inválido", validToken: false });
-            }
-            else{
-                await db('token').where({token}).del();
-                validToken = true;
-                console.log('Token válido: ' + validToken);
-                res.status(200).json({ message: "Token válido, redirecionando para redefinir senha", validToken: true });
-            }
-
-        }catch(err){
-            console.error("Erro ao verificar token ", err);
-            res.status(500).json({message: "Algo deu errado ao verificar o token"});
-        }
-    },
+    //     }catch(err){
+    //         console.error("Erro ao verificar token ", err);
+    //         res.status(500).json({message: "Algo deu errado ao verificar o token"});
+    //     }
+    // },
 };
