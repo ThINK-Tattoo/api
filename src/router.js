@@ -55,6 +55,7 @@ router.delete('/deleteclientes/:id', clienteController.deleteclientes);
 router.post('/reqRedefinicaoSenha', clienteController.requestResetPass);
 router.post('/verifyToken', clienteController.verifyToken);
 router.get('/updateSenha/:email', clienteController.resetPassword);
+router.post('/login', clienteController.AutenticacaoLogin);
 
 //Rotas Flash Tattoo
 router.post('/createFlashTattoo', flashTattooController.createFlashTattoo);
