@@ -1,6 +1,7 @@
 const db = require('../database/db');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -170,5 +171,24 @@ module.exports = {
             console.error("Erro ao redefinir a senha do usuário", err);
             res.status(500).json({message: "Algo deu errado ao redefinir a senha"});
         }
+    },
+
+    async AutenticacaoLogin(req,res){
+        const{ email, senha} = req.body;
+        const result = await db('cliente').where({email, senha}).select('*');
+
+        try{
+            if(result.length < 1){
+                console.log('Email não cadastrado');
+                console.log('Senha não cadastrada');
+                res.status(400).json({message: 'Conta não encontrada'});
+            }
+            const token =  jwt.sign({userId: result.id}, tokenKey, {expireIn: '1h'});  
+            res.json({auth:true, token});
+        }catch(err){
+            console.error("O usuário ainda não está cadastrado", err);
+            res.status(500).json({message: "A autenticação falhou, o usuário ainda não está cadastrado"});
+
     }
-};
+    }
+}
