@@ -2,6 +2,8 @@ const db = require('../database/db');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -175,20 +177,30 @@ module.exports = {
 
     async AutenticacaoLogin(req,res){
         const{ email, senha} = req.body;
-        const result = await db('cliente').where({email, senha}).select('*');
 
         try{
-            if(result.length < 1){
-                console.log('Email não cadastrado');
-                console.log('Senha não cadastrada');
-                res.status(400).json({message: 'Conta não encontrada'});
+            const result = await db('cliente').where({email}).select('*');
+            if(result.length === 0){
+                return res.status(401).json({message: "Email não localizado, confira novamente ou cadastre-se"})
             }
-            const token =  jwt.sign({userId: result.id}, tokenKey, {expireIn: '1h'});  
-            res.json({auth:true, token});
-        }catch(err){
-            console.error("O usuário ainda não está cadastrado", err);
-            res.status(500).json({message: "A autenticação falhou, o usuário ainda não está cadastrado"});
 
-    }
+            const storedHashPass = result[0].senha; // Coleta a senha criptografada do banco.
+            const comparePass = await bcrypt.compare(senha, storedHashPass);
+
+            if (comparePass){
+                //Senha correta
+                // const token =  jwt.sign({userId: result.id}, tokenKey, {expireIn: '1h'});  
+                // res.json({auth:true, token});
+                return res.status(200).json({message: "Login realizado com sucesso."})
+            } else{
+                //Senha incorreta.
+                return res.status(401).json({message: "Senha inserida incorretamente."});
+            }
+
+        } catch (err) {
+            console.error('Erro ao autenticar login', err);
+            return res.status(500).json({message: "Erro ao autenticar login"});
+        }
+
     }
 }
