@@ -1,6 +1,12 @@
 const db = require('../database/db');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const bcrypt = require ('bcrypt');
+const saltRounds = 10;
+/* Salt é uma sequencia aleatória que é gerada aleatoriamente e única para cada senha. 
+
+Salt Rounds é quantas vezes, em um Hash, o Salt será rodado. Ou seja, ele vai gerar um Salt elevado a 10.
+Criptografar, pegar o valor criptografado e criptografar novamente, 10 vezes.*/
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -36,12 +42,21 @@ module.exports = {
                 res.status(400).json({ message: 'O cliente precisa ter mais de 18 para poder usar nosso sistema' });
             }
             else{
+                const hashedPass  = await bcrypt.hash(senha, saltRounds);  
+                /* Hash: faz o hashing, trasnforma a entrada em uma sequência de caracteres. Por ser uma operação
+                unidirecional, ela é irreversível.  */
+
+                /**
+                 *  Esse HashedPass faz a criptografia da senha.
+                 * Na importação temos o Bcrypt que uma Lib que faz a criptografia das senhas,
+                 * ela faz a utilização de SaltRounds.
+                 */
                 const [id] = await db('confirmaCliente').insert({
                     nome,
                     telefone,
                     email,
                     idade,
-                    senha
+                    senha : hashedPass
                 });
                 
                 const token = crypto.randomBytes(4).toString('hex');
