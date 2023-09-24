@@ -49,12 +49,14 @@ module.exports = {
                 res.status(400).json({ message: 'O cliente precisa ter mais de 18 para poder usar nosso sistema' });
             }
             else{
-                const[id] = await db('cliente').insert({
+                const hashedPassword = await bcrypt.hash(senha, 10);
+
+                const [id] = await db('cliente').insert({
                     nome,
                     telefone,
                     email,
                     idade,
-                    senha
+                    senha: hashedPassword,
                 });
     
                 res.status(201).json({id, message: 'cliente cadastrado.'});
@@ -180,26 +182,40 @@ module.exports = {
 
         try{
             const result = await db('cliente').where({email}).select('*');
-            if(result.length === 0){
-                return res.status(401).json({message: "Email não localizado, confira novamente ou cadastre-se"})
-            }
+            const resultAdmin = await db('admin').where({email}).select('*');
+            
+            if(result.length === 0 && resultAdmin.length === 0){
+                 res.status(401).json({message: "Email não localizado, confira novamente ou cadastre-se"})
 
-            const storedHashPass = result[0].senha; // Coleta a senha criptografada do banco.
-            const comparePass = await bcrypt.compare(senha, storedHashPass);
-
-            if (comparePass){
-                //Senha correta
-                // const token =  jwt.sign({userId: result.id}, tokenKey, {expireIn: '1h'});  
-                // res.json({auth:true, token});
-                return res.status(200).json({message: "Login realizado com sucesso."})
-            } else{
-                //Senha incorreta.
-                return res.status(401).json({message: "Senha inserida incorretamente."});
+            }else if (result.length > 0){
+                const storedHashPass = result[0].senha; // Coleta a senha criptografada do banco.
+                const comparePass = await bcrypt.compare(senha, storedHashPass);
+    
+                if (comparePass){
+                    //Senha correta
+                    const token =  jwt.sign({userId: result.id}, 'jwtSecret', {expiresIn: '1h'});  
+                    res.json({ auth: true, token, userType: 'cliente' });
+                } else{
+                    //Senha incorreta.
+                     res.status(401).json({message: "Senha inserida incorretamente."});
+                }
+            }else {
+                const storedHashPass = resultAdmin[0].senha;
+                const comparePass = await bcrypt.compare(senha, storedHashPass);
+              
+                if (comparePass) {
+                  // Senha correta para o admin
+                  const token = jwt.sign({ userId: resultAdmin[0].id, userType: 'admin' }, 'jwtSecret', { expiresIn: '1h' });
+                  res.json({ auth: true, token, userType: 'admin' });
+                } else {
+                  // Senha incorreta para o admin
+                  res.status(401).json({ message: "Senha inserida incorretamente." });
+                }
             }
 
         } catch (err) {
             console.error('Erro ao autenticar login', err);
-            return res.status(500).json({message: "Erro ao autenticar login"});
+             res.status(500).json({message: "Erro ao autenticar login"});
         }
 
     }

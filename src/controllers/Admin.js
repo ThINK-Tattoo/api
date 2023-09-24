@@ -1,4 +1,5 @@
 const db = require('../database/db');
+const bcrypt = require('bcrypt');
 
 module.exports = {
     async getAllAdmin(req, res){
@@ -21,11 +22,12 @@ module.exports = {
         } = req.body;
 
         try{ 
+            const hashedPassword = await bcrypt.hash(senha, 10);
             const [id] = await db('admin').insert({
                 nome,
                 email,
                 fotoPerfil,
-                senha
+                senha: hashedPassword,
             });
 
             res.status(201).json({id, message: 'Admin adicionado com sucesso.'});
