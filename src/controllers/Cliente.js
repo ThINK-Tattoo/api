@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-
+const saltRounds = 10;
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -163,11 +163,12 @@ module.exports = {
         const { email } = req.params;
         const { senha, confirmSenha } = req.body;
 
+        const hashedPass  = await bcrypt.hash(senha, saltRounds); 
         try{
             if(senha != confirmSenha){
                 res.status(400).json({message: "Senhas diferentes, as duas senhas precisam ser iguais"});
             } else{
-                await db('cliente').where({email}).update({senha});
+                await db('cliente').where({email}).update({senha: hashedPass});
                 
                 res.status(200).json({message: "Senha redefinida com sucesso"});
             }
@@ -194,7 +195,7 @@ module.exports = {
                 if (comparePass){
                     //Senha correta
                     const token =  jwt.sign({userId: result.id}, 'jwtSecret', {expiresIn: '1h'});  
-                    res.json({ auth: true, token, userType: 'cliente' });
+                    res.json({ auth: true, token, userType: 'cliente', user: result });
                 } else{
                     //Senha incorreta.
                      res.status(401).json({message: "Senha inserida incorretamente."});
@@ -206,7 +207,7 @@ module.exports = {
                 if (comparePass) {
                   // Senha correta para o admin
                   const token = jwt.sign({ userId: resultAdmin[0].id, userType: 'admin' }, 'jwtSecret', { expiresIn: '1h' });
-                  res.json({ auth: true, token, userType: 'admin' });
+                  res.json({ auth: true, token, userType: 'admin', user: result});
                 } else {
                   // Senha incorreta para o admin
                   res.status(401).json({ message: "Senha inserida incorretamente." });

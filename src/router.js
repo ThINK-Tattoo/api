@@ -54,7 +54,7 @@ router.put('/updateclientes/:id', clienteController.updateclientes);
 router.delete('/deleteclientes/:id', clienteController.deleteclientes);
 router.post('/reqRedefinicaoSenha', clienteController.requestResetPass);
 router.post('/verifyToken', clienteController.verifyToken);
-router.get('/updateSenha/:email', clienteController.resetPassword);
+router.put('/updateSenha/:email', clienteController.resetPassword);
 router.post('/login', clienteController.AutenticacaoLogin);
 
 //Rotas Flash Tattoo
