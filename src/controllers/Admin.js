@@ -1,5 +1,15 @@
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'think.studio.tattoo@gmail.com',
+      pass: 'jsbgujwyvxfapzvq',
+    },
+  });
 
 module.exports = {
     async getAllAdmin(req, res){
@@ -18,10 +28,17 @@ module.exports = {
             nome,
             email,
             fotoPerfil,
-            senha
         } = req.body;
 
         try{ 
+            const senha = crypto.randomBytes(4).toString('hex');
+            await transporter.sendMail({
+                from: 'think.studio.tattoo@gmail.com', 
+                to: email, 
+                subject: 'Sua senha de login',
+                text: `Você foi adicionado como admin dentro do sistema sua senha é: ${senha}. Faça a redefinição de senha se possível.`,
+            });
+
             const hashedPassword = await bcrypt.hash(senha, 10);
             const [id] = await db('admin').insert({
                 nome,

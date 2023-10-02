@@ -1,4 +1,5 @@
 const db = require('../database/db');
+const moment = require('moment');
 
 module.exports = {
     async getAllAgendaConsulta(req, res){
@@ -12,43 +13,85 @@ module.exports = {
         }
     },
 
-    async createAgendaConsulta(req, res){
-        const {
-            idCliente,
-            nomeCliente,
-            tellCliente,
-            tamanhoTattoo,
-            estOrcamento,
-            dataTattoo,
-            hTattoo,
-            observacoes,
-            fotoReferencia,
-            status,
-            tipoTattoo
-        } = req.body;
 
-        try{
-            const [id] = await db('agendaconsulta').insert({
-                idCliente,
-                nomeCliente,
-                tellCliente,
-                tamanhoTattoo,
-                estOrcamento,
-                dataTattoo,
-                hTattoo,
-                observacoes,
-                fotoReferencia,
-                status,
-                tipoTattoo
-            });
+    async createAgendaConsulta(req, res) {
+    const {
+        idCliente,
+        nomeCliente,
+        tellCliente,
+        tamanhoTattoo,
+        estOrcamento,
+        dataTattoo,
+        hTattoo,
+        observacoes,
+        fotoReferencia,
+        status,
+        tipoTattoo
+    } = req.body;
 
-            res.status(201).json({id, message: 'Solicitação de agendamento da tatuagem feita com sucesso'});
+    try {
+        // Verificar conflitos de horário com 'confirmaAgenda' excluindo agendamentos com status "Feito"
+        const [hTerminoTattooValue] = await db('confirmaAgenda')
+        .select('hTerminoTattoo')
+        .where('dataTattoo', dataTattoo)
+        .whereNot('status', 'Feito')
+        .whereNot('status', 'Cancelada')
+        .orderBy('hTerminoTattoo', 'desc') // Ordene para obter o valor mais recente
+        .limit(1);
+      
+      const hTerminoTattoo = hTerminoTattooValue ? hTerminoTattooValue.hTerminoTattoo : null;
+      
+      const conflictingAgenda = await db('confirmaAgenda')
+        .where('dataTattoo', dataTattoo)
+        .whereNot('status', 'Feito') // essa linha ficará aqui até fazer a validação no front
+        .where(function () {
+          this.where(function () {
+            this.where('hTattoo', '<', hTattoo)
+              .andWhere('hTerminoTattoo', '>', hTattoo);
+          })
+          .orWhere(function () {
+            this.where('hTattoo', '<', hTerminoTattoo)
+              .andWhere('hTerminoTattoo', '>', hTattoo);
+          })
+          .orWhere(function () {
+            this.where('hTattoo', '>=', hTattoo)
+              .andWhere('hTerminoTattoo', '<=', hTerminoTattoo);
+          });
+        })
+        .first();
+      
 
-        }catch(err){
-            console.error('Erro ao solicitar agendamento: ', err);
-            res.status(500).json({message: 'Erro ao solicitar agendamento: '});
+        if (conflictingAgenda) {
+        return res.status(400).json({ message: 'Conflito de horário com agendamento existente.' });
         }
-    },
+
+        // Impedir que novas tatuagens sejam marcadas dentro de 30 minutos do final do horário de uma consulta
+        const latestConfirmaAgenda = await db('confirmaAgenda')
+        .where('dataTattoo', '<=', dataTattoo)
+        .where('hTattoo', '<=', hTattoo)
+        .whereNot('status', 'Feito')
+        .whereNot('status', 'Cancelada') 
+        .orderBy('dataTattoo', 'desc')
+        .orderBy('hTattoo', 'desc')
+        .first();
+
+        if (
+        latestConfirmaAgenda &&
+        moment(`${latestConfirmaAgenda.dataTattoo} ${latestConfirmaAgenda.hTerminoTattoo}`).add(30, 'minutes') > moment(`${dataTattoo} ${hTattoo}`)
+        ) {
+        return res.status(400).json({ message: 'Nova tatuagem não pode ser marcada dentro de 30 minutos do final do horário de uma consulta.' });
+        }
+
+        // Continuar com a inserção na tabela 'agendaConsulta'
+        const [id] = await db('agendaConsulta').insert(req.body);
+
+        res.status(201).json({ id, message: 'Solicitação de agendamento da tatuagem feita com sucesso' });
+    } catch (err) {
+        console.error('Erro ao solicitar agendamento: ', err);
+        res.status(500).json({ message: 'Erro ao solicitar agendamento.' });
+    }
+},
+
 
     async updateAgendaConsulta(req, res){
         const { id } = req.params;
@@ -100,5 +143,7 @@ module.exports = {
                 console.error('Erro ao excluir solicitação de tatuagem: ', err);
                 res.status(500).json({ message: 'Erro ao excluir solicitação de tatuagem.' });
             }
-        }
+        },
+
+        
     }
