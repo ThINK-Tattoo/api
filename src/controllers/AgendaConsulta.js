@@ -14,7 +14,7 @@ module.exports = {
     },
 
 
-    async createAgendaConsulta(req, res) {
+async createAgendaConsulta(req, res) {
     const {
         idCliente,
         nomeCliente,
@@ -30,6 +30,18 @@ module.exports = {
     } = req.body;
 
     try {
+        const statusAgenda = await db('statusAgenda').select('*').first();
+    
+        // Verifica se a agenda está fechada para o restante do dia
+        if (statusAgenda && statusAgenda.statusAgenda === 'Fechado') {
+            const dataFechamento = moment(statusAgenda.dataFechamento).format('YYYY-MM-DD');
+            const dataTattooFormatada = moment(dataTattoo).format('YYYY-MM-DD');
+          
+            if (dataTattooFormatada === dataFechamento) {
+              return res.status(400).json({ message: 'Agenda está fechada para o restante do dia.' });
+            }
+          }
+
         // Verificar conflitos de horário com 'confirmaAgenda' excluindo agendamentos com status "Feito"
         const [hTerminoTattooValue] = await db('confirmaAgenda')
         .select('hTerminoTattoo')

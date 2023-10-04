@@ -28,6 +28,8 @@ router.post('/createAdmin', adminController.createAdmin);
 router.get('/selectAdmin', adminController.getAllAdmin);
 router.put('/updateAdmin/:id', adminController.updateAdmin);
 router.delete('/deleteAdmin/:id', adminController.deleteAdmin); 
+router.post('/fecharAgenda', adminController.closeAgenda);
+router.put('/abrirAgenda', adminController.openAgenda);
 
 //Rotas Portfólio
 router.post('/createPortfolio', portfolioController.createPortfolio);
@@ -66,5 +68,7 @@ router.delete('/deleteFlashTattoo/:id', flashTattooController.deleteFlashTattoo)
 //Rotas Confirma Cliente
 router.post('/createConfirmaCliente', confirmaClienteController.createConfirmaClientes);
 router.post('/verifyTokenConfirmaCleinte', confirmaClienteController.verifyTokenConfirmaCliente);
+
+
 
 module.exports = router;

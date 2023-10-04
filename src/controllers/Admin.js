@@ -1,6 +1,7 @@
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
+const moment = require('moment');
 const crypto = require('crypto');
 
 const transporter = nodemailer.createTransport({
@@ -91,6 +92,56 @@ module.exports = {
                 console.error('Erro ao excluir admin: ', err);
                 res.status(500).json({ message: 'Erro ao excluir admin.' });
             }
+        },
+
+        async closeAgenda(req, res){
+            const statusAgenda = await db('statusAgenda').select('*');
+
+            try{
+                const dataFechamento = moment().format('YYYY-MM-DD'); // Data atual
+                const hFechamento = moment().format('HH:mm:ss'); // Hora atual
+
+                if(statusAgenda.length >= 1){
+                    await db('statusAgenda').update({
+                        statusAgenda: 'Fechado',
+                        dataFechamento,
+                        hFechamento
+                    });
+                    console.log('Data: ', dataFechamento, ' Hora: ', hFechamento);
+                    res.status(200).json({ message: 'Agenda fechada com sucesso.' });
+                }else{
+                    const [id] = await db('statusAgenda').insert({
+                        statusAgenda: 'Fechado',
+                        dataFechamento,
+                        hFechamento
+                    });
+                    console.log('Data: ', dataFechamento, ' Hora: ', hFechamento);
+                    res.status(200).json({ message: 'Agenda fechada com sucesso.' });
+        
+                }
+                
+    
+               
+            }catch(err){
+                console.error('Erro ao fechar agenda: ', err);
+                res.status(500).json({ message: 'Erro ao fechar agenda.' });
+            }
+        },
+
+        async openAgenda(req, res){
+           
+            try{
+                await db('statusAgenda').where({statusAgenda: 'Fechado'}).update({
+                    statusAgenda: 'Aberto',
+                    dataFechamento: null,
+                    hFechamento: null
+                });
+                res.status(200).json({ message: 'Agenda aberta com sucesso.' });
+    
+            }catch(err){
+                console.error('Erro ao fechar agenda: ', err);
+                res.status(500).json({ message: 'Erro ao abrir agenda.' });
             }
         }
+ }
 

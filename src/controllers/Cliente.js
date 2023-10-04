@@ -100,6 +100,7 @@ module.exports = {
         const {id} = req.params;
 
         try{
+            await db('confirmaAgenda').where({idCliente: id}).del();
             await db('cliente').where({id}).del();
             res.status(200).json({ message: 'Dados do cliente deletados com sucesso'});
         } catch (err) {

@@ -11,6 +11,7 @@ const flashTattoRoutes = require('./router');
 const historicoRoutes = require('./router');
 const estoqueRoutes = require('./router');
 const confirmaCliente = require ('./router');
+const fecharAgenda = require('./router');
 
 app.use(express.json()); 
 
