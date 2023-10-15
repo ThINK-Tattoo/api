@@ -1,6 +1,10 @@
 // clientesRoutes.js
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 const agendaConController = require('./controllers/AgendaConsulta');
 const agendaController = require('./controllers/AgendaConfirma');
 const adminController = require('./controllers/Admin');
@@ -24,7 +28,7 @@ router.put('/updateAgendaCon/:id', agendaConController.updateAgendaConsulta);
 router.delete('/deleteAgendaCon/:id', agendaConController.deleteAgendaConsulta);
 
 //Rotas Admin
-router.post('/createAdmin', adminController.createAdmin);
+router.post('/createAdmin', upload.single('file'), adminController.createAdmin);
 router.get('/selectAdmin', adminController.getAllAdmin);
 router.put('/updateAdmin/:id', adminController.updateAdmin);
 router.delete('/deleteAdmin/:id', adminController.deleteAdmin); 

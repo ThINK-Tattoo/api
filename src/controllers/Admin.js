@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const moment = require('moment');
 const crypto = require('crypto');
+const fs = require('fs');
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -11,6 +12,28 @@ const transporter = nodemailer.createTransport({
       pass: 'jsbgujwyvxfapzvq',
     },
   });
+
+  function base64_decode(base64str, fileName) {
+    const bitmap = Buffer.from(base64str, 'base64');
+    const directory = 'src/temp/';
+
+    // Certificar-se de que o diretório existe
+    if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
+    }
+
+    fs.writeFileSync(`${directory}${fileName}`, bitmap, 'binary', function (err) {
+        if (err) {
+            console.log('Conversão com erro');
+        }
+    });
+}
+  
+  // Convertendo arquivo em binário
+  function base64_encode(fileName) {
+    const bitmap = fs.readFileSync(`src/temp/${fileName}`);
+    return Buffer.from(bitmap).toString('base64');
+  }
 
 module.exports = {
     async getAllAdmin(req, res){
@@ -24,35 +47,40 @@ module.exports = {
         }
     },
 
-    async createAdmin(req, res){
-        const {
-            nome,
-            email,
-            fotoPerfil,
-        } = req.body;
+    async createAdmin(req, res) {
+        const { nome, email } = req.body;
+        const { file } = req;
 
-        try{ 
+        try {
             const senha = crypto.randomBytes(4).toString('hex');
+
             await transporter.sendMail({
-                from: 'think.studio.tattoo@gmail.com', 
-                to: email, 
+                from: 'think.studio.tattoo@gmail.com',
+                to: email,
                 subject: 'Sua senha de login',
                 text: `Você foi adicionado como admin dentro do sistema sua senha é: ${senha}. Faça a redefinição de senha se possível.`,
             });
 
             const hashedPassword = await bcrypt.hash(senha, 10);
+
+            // Salvar a imagem no sistema de arquivos
+            const fileName = `admin_${Date.now()}.png`;
+            base64_decode(file.buffer.toString('base64'), fileName);
+
+            // Salvar os dados no banco de dados
             const [id] = await db('admin').insert({
                 nome,
                 email,
-                fotoPerfil,
+                fotoPerfil: fileName, // Salvar o nome do arquivo no banco de dados
                 senha: hashedPassword,
             });
 
-            res.status(201).json({id, message: 'Admin adicionado com sucesso.'});
+            console.log('Conteúdo de req.file:', req.file);
+            res.status(201).json({ id, message: 'Admin adicionado com sucesso.' });
 
-        }catch(err){
+        } catch (err) {
             console.error('Erro ao adicionar novo administrador', err);
-            res.status(500).json({message: 'Erro ao adicionar administrador: '});
+            res.status(500).json({ message: 'Erro ao adicionar administrador.' });
         }
     },
 

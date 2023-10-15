@@ -21,7 +21,7 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
-
+app.use('/src/temp', express.static('src/temp'));
 app.use('/agenda', agendaRoutes);
 app.use('/agendaConsulta', agendaConRoutes);
 app.use('/portfolio', portfolioRoutes);
