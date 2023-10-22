@@ -208,7 +208,7 @@ module.exports = {
                 if (comparePass) {
                   // Senha correta para o admin
                   const token = jwt.sign({ userId: resultAdmin[0].id, userType: 'admin' }, 'jwtSecret', { expiresIn: '1h' });
-                  res.json({ auth: true, token, userType: 'admin', user: result});
+                  res.json({ auth: true, token, userType: 'admin', user: resultAdmin});
                 } else {
                   // Senha incorreta para o admin
                   res.status(401).json({ message: "Senha inserida incorretamente." });

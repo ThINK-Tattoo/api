@@ -1,4 +1,27 @@
 const db = require('../database/db');
+const fs = require('fs');
+
+function base64_decode(base64str, fileName) {
+    const bitmap = Buffer.from(base64str, 'base64');
+    const directory = 'src/temp/';
+
+    // Certificar-se de que o diretório existe
+    if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
+    }
+
+    fs.writeFileSync(`${directory}${fileName}`, bitmap, 'binary', function (err) {
+        if (err) {
+            console.log('Conversão com erro');
+        }
+    });
+}
+  
+  // Convertendo arquivo em binário
+  function base64_encode(fileName) {
+    const bitmap = fs.readFileSync(`src/temp/${fileName}`);
+    return Buffer.from(bitmap).toString('base64');
+  }
 
 module.exports = {
     async getAllPortfolio(req, res){
@@ -12,27 +35,41 @@ module.exports = {
         }
     },
 
-    async createPortfolio(req, res){
+    async createPortfolio(req, res) {
         const {
             idAdmin,
-            imagem,
-            descricao
+            nome,
+            tamanho,
+            local,
+            tipo,
+            cores,
+            
         } = req.body;
+        const { file } = req;
 
-        try{
-            const[id] = await db('portfolio').insert({
+        try {
+            const fileName = `admin_${Date.now()}.png`;
+            base64_decode(file.buffer.toString('base64'), fileName);
+
+            const [id] = await db('portfolio').insert({
                 idAdmin,
-                imagem,
-                descricao
+                nome,
+                tamanho,
+                local,
+                tipo,
+                cores,
+                imagem: fileName
             });
-            res.status(200).json({ message: 'Imagem inserida com sucesso no portfólio'});
+            
+            console.log('Conteúdo de req.file:', req.file);
+            res.status(200).json({ message: 'Imagem inserida com sucesso no portfólio' });
     
-        }catch(err){
+        } catch (err) {
             console.error('Erro ao adicionar imagem ao portfólio: ', err);
-            res.status(500).json({message: 'Erro ao adicionar imagem ao portfólio:'});
+            res.status(500).json({ message: 'Erro ao adicionar imagem ao portfólio' });
         }
     },
-
+    
     async updatePortfolio(req, res){
         const {id} = req.params;
 

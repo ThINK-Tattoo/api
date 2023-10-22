@@ -1,5 +1,27 @@
 const db = require ('../database/db');
+const fs = require('fs');
 
+function base64_decode(base64str, fileName) {
+    const bitmap = Buffer.from(base64str, 'base64');
+    const directory = 'src/temp/';
+
+    // Certificar-se de que o diretório existe
+    if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
+    }
+
+    fs.writeFileSync(`${directory}${fileName}`, bitmap, 'binary', function (err) {
+        if (err) {
+            console.log('Conversão com erro');
+        }
+    });
+}
+  
+  // Convertendo arquivo em binário
+  function base64_encode(fileName) {
+    const bitmap = fs.readFileSync(`src/temp/${fileName}`);
+    return Buffer.from(bitmap).toString('base64');
+  }
 module.exports = {
     async getAllFlashTattoo(req, res){
         try{
@@ -10,31 +32,42 @@ module.exports = {
             res.status(500).json({message:'Erro ao localizar as flash tattoos'});
         }
     },
-    async createFlashTattoo(req, res){
+    async createFlashTattoo(req, res) {
         const {
-        idAdmin,
-        imagem,
-        tamanho,
-        descricao,
-        valor,
-        estilo,
-        } = req.body;
-
-        try{
-            const[id] = await db('flashTattoo').insert({
             idAdmin,
-            imagem,
+            nome,
             tamanho,
-            descricao,
+            local,
+            tipo,
+            cores,
             valor,
-            estilo
+            
+        } = req.body;
+        const { file } = req;
+    
+        try {
+            const fileName = `admin_${Date.now()}.png`;
+            base64_decode(file.buffer.toString('base64'), fileName);
+
+            const [id] = await db('flashTattoo').insert({
+                idAdmin,
+                nome,
+                tamanho,
+                local,
+                tipo,
+                cores,
+                valor,
+               imagem: fileName
             });
-            res.status(200).json({message: 'Informações inseridas com sucesso'});
-        }catch(err){
-            console.error('Erro ao adicionar as informações na flash tattoo', err);
-            res.status(500).json({message: 'Erro ao adicionar informações da flash tattoo '});
+            console.log('Conteúdo de req.file:', req.file);
+            res.status(200).json({ message: 'Informações inseridas com sucesso' });
+    
+        } catch (err) {
+            console.error('Erro ao adicionar as informações na flash tattoo: ', err);
+            res.status(500).json({ message: 'Erro ao adicionar informações da flash tattoo' });
         }
     },
+    
     async updateFlashTattoo(req, res){
         const {id} = req.params;
         

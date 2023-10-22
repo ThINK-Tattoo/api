@@ -2,12 +2,14 @@ exports.up = function(knex) {
   return knex.schema.createTable('flashTattoo', function(table){
     table.increments('id').primary();
     table.integer('idAdmin').unsigned().notNullable();
-    table.string('imagem');
+    table.string('nome');
     table.string('tamanho');
-    table.string('descricao');
+    table.string('local');
+    table.string('tipo');
+    table.string('cores');
     table.double('valor');
-    table.string('estilo');
-
+    table.string('imagem');
+    
     table.foreign('idAdmin').references('id').inTable('admin');
   })
 };

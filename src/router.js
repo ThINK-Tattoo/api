@@ -36,7 +36,7 @@ router.post('/fecharAgenda', adminController.closeAgenda);
 router.put('/abrirAgenda', adminController.openAgenda);
 
 //Rotas Portfólio
-router.post('/createPortfolio', portfolioController.createPortfolio);
+router.post('/createPortfolio', upload.single('file'), portfolioController.createPortfolio);
 router.get('/selectPortfolio', portfolioController.getAllPortfolio);
 router.put('/updatePortfolio/:id', portfolioController.updatePortfolio);
 router.delete('/deletePortfolio/:id', portfolioController.deletePortfolio);
@@ -64,7 +64,7 @@ router.put('/updateSenha/:email', clienteController.resetPassword);
 router.post('/login', clienteController.AutenticacaoLogin);
 
 //Rotas Flash Tattoo
-router.post('/createFlashTattoo', flashTattooController.createFlashTattoo);
+router.post('/createFlashTattoo', upload.single('file'), flashTattooController.createFlashTattoo);
 router.get('/selectFlashTattoo', flashTattooController.getAllFlashTattoo);
 router.put('/updateFlashTattoo/:id', flashTattooController.updateFlashTattoo);
 router.delete('/deleteFlashTattoo/:id', flashTattooController.deleteFlashTattoo);
