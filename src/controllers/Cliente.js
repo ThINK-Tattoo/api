@@ -13,6 +13,14 @@ const transporter = nodemailer.createTransport({
     },
   });
 
+  const contato = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'contato.think.studio@gmail.com',
+      pass: 'dwkljpgcgbdllljt',
+    },
+  });
+
 module.exports = {
     
     async getAllclientes(req, res){
@@ -220,5 +228,27 @@ module.exports = {
              res.status(500).json({message: "Erro ao autenticar login"});
         }
 
+    },
+
+    async sendContatoMail(req, res){
+        const {nome, email, telefone, assunto, mensagem } = req.body;
+
+        try{
+            await contato.sendMail({
+                from: 'contato.think.studio@gmail.com', 
+                to: 'think.studio.tattoo@gmail.com', 
+                subject: `${assunto}`,
+                text: `
+                Nome do Cliente: ${nome}
+                Telefone: ${telefone}
+                E-mail para contato: ${email}
+                Mensagem: 
+                ${mensagem}`,
+              });
+    
+              res.status(200).json({ message: 'Email de contato enviado com sucesso.' });
+        }catch(err){
+            console.error("Erro ao enviar email", err);
+        }
     }
 }

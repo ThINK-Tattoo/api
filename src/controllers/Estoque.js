@@ -1,41 +1,73 @@
 const db =  require('../database/db.js');
 
 module.exports={
-    async getAllEstoque(req, res){
-        try{
-            const estoque = await db('produtoestoque').select('*');
-            res.status(200).json(estoque);
-        }
-
-        catch(err){
+    async getAllEstoque(req, res) {
+        try {
+            const estoque = await db('produtoestoque')
+                .select('produtoestoque.*', 'movimentacaoestoque.dataHora')
+                .leftJoin('movimentacaoestoque', 'produtoestoque.id', 'movimentacaoestoque.idProduto');
+    
+            // Remover a informação de hora da dataHora, dataValidadeItem e dataCompraItem
+            const estoqueFormatado = estoque.map(item => {
+                const dataValidadeFormatada = item.dataValidadeItem
+                    ? new Date(item.dataValidadeItem).toISOString().split('T')[0]
+                    : null;
+    
+                const dataCompraFormatada = item.dataCompraItem
+                    ? new Date(item.dataCompraItem).toISOString().split('T')[0]
+                    : null;
+    
+                return {
+                    ...item,
+                    dataHora: item.dataHora ? new Date(item.dataHora).toISOString().split('T')[0] : null,
+                    dataValidadeItem: dataValidadeFormatada,
+                    dataCompraItem: dataCompraFormatada,
+                };
+            });
+    
+            res.status(200).json(estoqueFormatado);
+        } catch (err) {
             console.error('Erro ao buscar os itens no estoque', err);
-            res.status(500).json({message: "Erro ao buscas os itens no estoque"});
+            res.status(500).json({ message: "Erro ao buscar os itens no estoque" });
         }
     },
-
+    
+    
+    
     async createItemEstoque(req, res){
-        const{
-            nomeItem,
-            descricaoItem,
-            dataValidadeItem,
-            dataCompraItem,
-            quantidadeItem
+        const {
+            nome,
+            grupoItem,
+            quantidade,
+            dataCompra,
+            dataValidade,
         } = req.body;
-
-        try{
-            const [id] = await db('produtoestoque').insert({
-                nomeItem,
-                descricaoItem,
-                dataValidadeItem,
-                dataCompraItem,
-                quantidadeItem
+    
+        try {
+            // Inserção na tabela produtoestoque
+            const [idProduto] = await db('produtoestoque').insert({
+                nomeItem: nome,
+                descricaoItem: grupoItem,
+                quantidadeItem: quantidade,
+                dataCompraItem: dataCompra,
+                dataValidadeItem: dataValidade,
             });
-
-            res.status(201).json({id, message: 'Solicitacao de item do estoque'});
-
-        } catch(err){
-            console.error('Erro ao solicitar os itens do estoque',err);
-            res.status(500).json({message: 'Erro ao solicitar Itens do Estoque'});
+    
+            // Obtendo a data e hora atual
+            const dataHora = new Date().toISOString();
+    
+            // Inserção na tabela movimentacaoestoque
+            const [idMovimentacao] = await db('movimentacaoestoque').insert({
+                idProduto,
+                tipoMovimentacao: 'Entrada',
+                dataHora,
+                quantidade,
+            });
+    
+            res.status(201).json({ idProduto, idMovimentacao, message: 'Solicitação de item do estoque' });
+        } catch (err) {
+            console.error('Erro ao solicitar os itens do estoque', err);
+            res.status(500).json({ message: 'Erro ao solicitar Itens do Estoque' });
         }
     },
 

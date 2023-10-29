@@ -40,7 +40,9 @@ module.exports = {
             local,
             tipo,
             cores,
-            valor,
+            valor1,
+            valor2, 
+            valor3
             
         } = req.body;
         const { file } = req;
@@ -56,8 +58,10 @@ module.exports = {
                 local,
                 tipo,
                 cores,
-                valor,
-               imagem: fileName
+                valor1,
+                valor2, 
+                valor3,
+                imagem: fileName
             });
             console.log('Conteúdo de req.file:', req.file);
             res.status(200).json({ message: 'Informações inseridas com sucesso' });
@@ -70,14 +74,19 @@ module.exports = {
     
     async updateFlashTattoo(req, res){
         const {id} = req.params;
-        
+        const { file } = req;
+        const fileName = `admin_${Date.now()}.png`;
+        base64_decode(file.buffer.toString('base64'), fileName);
         const{
             idAdmin,
-            imagem,
+            nome,
             tamanho,
-            descricao,
-            valor,
-            estilo
+            local,
+            tipo,
+            cores,
+            valor1,
+            valor2, 
+            valor3
         } = req.body;
 
         try{
@@ -85,11 +94,15 @@ module.exports = {
             .where({id})
             .update({
                 idAdmin,
-                imagem,
+                nome,
                 tamanho,
-                descricao,
-                valor,
-                estilo,
+                local,
+                tipo,
+                cores,
+                valor1,
+                valor2, 
+                valor3,
+                imagem: fileName
             });
             res.status(200).json({message: 'Informações da Flash Tattoo atualizadas com sucesso'});
         }catch(err){

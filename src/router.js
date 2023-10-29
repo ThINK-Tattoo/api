@@ -62,11 +62,12 @@ router.post('/reqRedefinicaoSenha', clienteController.requestResetPass);
 router.post('/verifyToken', clienteController.verifyToken);
 router.put('/updateSenha/:email', clienteController.resetPassword);
 router.post('/login', clienteController.AutenticacaoLogin);
+router.post('/contato', clienteController.sendContatoMail);
 
 //Rotas Flash Tattoo
 router.post('/createFlashTattoo', upload.single('file'), flashTattooController.createFlashTattoo);
 router.get('/selectFlashTattoo', flashTattooController.getAllFlashTattoo);
-router.put('/updateFlashTattoo/:id', flashTattooController.updateFlashTattoo);
+router.put('/updateFlashTattoo/:id', upload.single('file'), flashTattooController.updateFlashTattoo);
 router.delete('/deleteFlashTattoo/:id', flashTattooController.deleteFlashTattoo);
 
 //Rotas Confirma Cliente
