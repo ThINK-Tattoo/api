@@ -1,4 +1,28 @@
 const db = require('../database/db');
+const QRCode =  require ('qrcode');
+const nodemailer = require ('nodemailer');
+const PDFDocument = require ('pdfkit');
+
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'think.studio.tattoo@gmail.com',
+        pass: 'jsbgujwyvxfapzvq'
+    }
+})
+
+async function sendEmail(destinatario, qrCodeDataUrl){
+    const mailOptions = {
+        from: 'think.studio.tattoo@gmail.com',
+        to: destinatario,
+        subject: 'QRCode para sua consulta de tatuagem, favor não perder pois o mesmo é único',
+        html: '<p> Escaneie o QRCode abaixo para confirmar sua consulta: </p><br>' +
+                '<img src= "${qrCodeDataUrl}" alt= "QRCode">',
+    };
+    await transporter.sendMail(mailOptions);
+}
+
 
 module.exports = {
     async getAllAgendas(req, res){
@@ -26,10 +50,18 @@ module.exports = {
             observacoes,
             fotoReferencia,
             status,
-            tipoTattoo
+            tipoTattoo,
+            qrCode
         } = req.body;
 
         try{
+            //Gerar código aleatório para QRCode
+            const codigoAleatorio = Math.floor(1000 + Math.random() * 9000).toString();
+
+            // Gerar o QRCode com base no código aleatório
+            const qrCodeDataUrl = await QRCode.toDataURL(codigoAleatorio);
+
+
             const [id] = await db('confirmaagenda').insert({
                 idCliente,
                 idAdmin,
@@ -43,8 +75,16 @@ module.exports = {
                 observacoes,
                 fotoReferencia,
                 status,
-                tipoTattoo
+                tipoTattoo,
+                qrCode: qrCodeDataUrl // Armazenando a String de dados do QRCode no banco de dados.
             });
+
+            const cliente = await db('cliente').select('email').where({ id: idCliente}).first();
+            
+            if (cliente && cliente.email) {
+                //Enviar email com o QRCode anexado
+                await sendEmail(cliente.email, qrCodeDataUrl);
+            }
 
             res.status(201).json({id, message: 'Tatuagem marcada com sucesso.'});
 

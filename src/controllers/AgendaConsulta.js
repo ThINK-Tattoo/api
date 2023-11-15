@@ -1,5 +1,22 @@
 const db = require('../database/db');
 const moment = require('moment');
+const NodeWebCam = require ('node-webcam');
+
+
+const webcam = NodeWebCam.create();
+//Capturar imagem da camera:
+
+const captureImage = () => {
+    return new Promise((resolve, reject) => {
+        webcam.capture('captured-image', (err, data) =>{
+            if(err){
+                reject(err);
+            } else {
+                resolve (data);
+            }
+        })
+    })
+}
 
 module.exports = {
     async getAllAgendaConsulta(req, res){

@@ -14,6 +14,7 @@ exports.up = function(knex) {
     table.string('fotoReferencia');
     table.string('status');
     table.string('tipoTattoo');
+    table.string('qrcode');
 
     table.foreign('idCliente').references('id').inTable('cliente');
     table.foreign('idAdmin').references('id').inTable('admin');
