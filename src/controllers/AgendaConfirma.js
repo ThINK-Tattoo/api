@@ -13,12 +13,20 @@ const transporter = nodemailer.createTransport({
 })
 
 async function sendEmail(destinatario, qrCodeDataUrl){
+    
     const mailOptions = {
         from: 'think.studio.tattoo@gmail.com',
         to: destinatario,
         subject: 'QRCode para sua consulta de tatuagem, favor não perder pois o mesmo é único',
-        html: '<p> Escaneie o QRCode abaixo para confirmar sua consulta: </p><br>' +
-                '<img src= "${qrCodeDataUrl}" alt= "QRCode">',
+        html:`<p>Teste por favor de certo Deus</p>`,
+        attachments: [
+            {
+                filename: 'qrcode.png',
+                content: qrCodeDataUrl.split(';base64,').pop(),
+                encoding: 'base64',
+            },
+        ],
+
     };
     await transporter.sendMail(mailOptions);
 }

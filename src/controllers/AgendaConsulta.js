@@ -93,7 +93,6 @@ async createAgendaConsulta(req, res) {
         if (conflictingAgenda) {
         return res.status(400).json({ message: 'Conflito de horário com agendamento existente.' });
         }
-
         // Impedir que novas tatuagens sejam marcadas dentro de 30 minutos do final do horário de uma consulta
         const latestConfirmaAgenda = await db('confirmaAgenda')
         .where('dataTattoo', '<=', dataTattoo)
