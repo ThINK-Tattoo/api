@@ -72,7 +72,7 @@ router.delete('/deleteFlashTattoo/:id', flashTattooController.deleteFlashTattoo)
 
 //Rotas Confirma Cliente
 router.post('/createConfirmaCliente', confirmaClienteController.createConfirmaClientes);
-router.post('/verifyTokenConfirmaCleinte', confirmaClienteController.verifyTokenConfirmaCliente);
+router.post('/verifyTokenConfirmaCliente', confirmaClienteController.verifyTokenConfirmaCliente);
 
 
 

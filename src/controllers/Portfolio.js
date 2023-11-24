@@ -73,19 +73,32 @@ module.exports = {
     async updatePortfolio(req, res){
         const {id} = req.params;
 
-        const{
+         const {
             idAdmin,
-            imagem,
-            descricao
+            nome,
+            tamanho,
+            local,
+            tipo,
+            cores,
+            
         } = req.body;
+        const { file } = req;
+
 
         try{
+            const fileName = `admin_${Date.now()}.png`;
+            base64_decode(file.buffer.toString('base64'), fileName);
+
             await db('portfolio')
             .where({id})
             .update({
                 idAdmin,
-                imagem,
-                descricao,
+                nome,
+                tamanho,
+                local,
+                tipo,
+                cores,
+                imagem: fileName
             });
             res.status(200).json({ message: 'Item do portfólio atualizado com sucesso.'});
         } catch (err) {

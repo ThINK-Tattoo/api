@@ -59,7 +59,7 @@ module.exports = {
                     senha : hashedPass
                 });
                 
-                const token = crypto.randomBytes(4).toString('hex');
+                const token = crypto.randomBytes(3).toString('hex');
                 
                 await db('token').insert({
                     idCliente: id, // Use o id obtido na inserção anterior
