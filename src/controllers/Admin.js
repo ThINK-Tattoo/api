@@ -48,8 +48,8 @@ module.exports = {
     },
 
     async createAdmin(req, res) {
-        const { nome, email } = req.body;
-        const { file } = req;
+        const { nome, email, file } = req.body;
+        //const { file } = req;
 
         try {
             const senha = crypto.randomBytes(4).toString('hex');
@@ -64,14 +64,14 @@ module.exports = {
             const hashedPassword = await bcrypt.hash(senha, 10);
 
             // Salvar a imagem no sistema de arquivos
-            const fileName = `admin_${Date.now()}.png`;
-            base64_decode(file.buffer.toString('base64'), fileName);
+            // const fileName = `admin_${Date.now()}.png`;
+            // base64_decode(file.buffer.toString('base64'), fileName);
 
             // Salvar os dados no banco de dados
             const [id] = await db('admin').insert({
                 nome,
                 email,
-                fotoPerfil: fileName, // Salvar o nome do arquivo no banco de dados
+                fotoPerfil: file,   /*: fileName*/ // Salvar o nome do arquivo no banco de dados
                 senha: hashedPassword,
             });
 
