@@ -16,14 +16,15 @@ const confirmaClienteController = require('./controllers/ConfirmaCliente');
 const flashTattooController = require('./controllers/FlashTatto');
 
 //Rotas Agenda Confirma
-router.post('/createAgenda', agendaController.createAgenda);
+router.post('/createAgenda/:idTatuagem', agendaController.createAgenda);
 router.get('/selectAgenda', agendaController.getAllAgendas);
 router.put('/updateAgenda/:id', agendaController.updateAgenda);
 router.delete('/deleteAgenda/:id', agendaController.deleteAgenda);
 
 //Rotas Agenda Consulta
 router.post('/createAgendaCon', agendaConController.createAgendaConsulta);
-router.get('/selectAgendaCon', agendaConController.getAllAgendaConsulta);
+router.get('/selectAgendaCon/:id', agendaConController.getAllAgendaConsulta);
+router.get('/selectAllAgendaCon', agendaConController.getAllAgendaConsultaClientes);
 router.put('/updateAgendaCon/:id', agendaConController.updateAgendaConsulta);
 router.delete('/deleteAgendaCon/:id', agendaConController.deleteAgendaConsulta);
 
@@ -38,7 +39,7 @@ router.put('/abrirAgenda', adminController.openAgenda);
 //Rotas Portfólio
 router.post('/createPortfolio', upload.single('file'), portfolioController.createPortfolio);
 router.get('/selectPortfolio', portfolioController.getAllPortfolio);
-router.put('/updatePortfolio/:id', portfolioController.updatePortfolio);
+router.put('/updatePortfolio/:id', upload.single('file'), portfolioController.updatePortfolio);
 router.delete('/deletePortfolio/:id', portfolioController.deletePortfolio);
 
 // Rotas Estoque

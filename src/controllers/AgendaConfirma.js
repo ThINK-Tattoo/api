@@ -12,7 +12,9 @@ module.exports = {
         }
     },
 
-    async createAgenda(req, res){
+    async createAgenda(req, res) {
+        const { idTatuagem } = req.params; // id da consulta
+    
         const {
             idCliente,
             idAdmin,
@@ -25,34 +27,45 @@ module.exports = {
             hTerminoTattoo,
             observacoes,
             fotoReferencia,
-            status,
-            tipoTattoo
+            tipoTattoo,
+            confirmaTattoo
         } = req.body;
-
-        try{
-            const [id] = await db('confirmaagenda').insert({
-                idCliente,
-                idAdmin,
-                nomeCliente,
-                tellCliente,
-                tamanhoTattoo,
-                estOrcamento,      
-                dataTattoo,
-                hTattoo,
-                hTerminoTattoo,
-                observacoes,
-                fotoReferencia,
-                status,
-                tipoTattoo
-            });
-
-            res.status(201).json({id, message: 'Tatuagem marcada com sucesso.'});
-
-        }catch(err){
-            console.error('Erro ao marcar tatuagem: ', err);
-            res.status(500).json({message: 'Erro ao marcar tatuagem: '});
+    
+        try {
+            if (confirmaTattoo === "Aceitar") {
+                // Inserir na tabela 'confirmaagenda'
+                const [id] = await db('confirmaagenda').insert({
+                    idCliente,
+                    nomeCliente,
+                    tellCliente,
+                    tamanhoTattoo,
+                    estOrcamento,
+                    dataTattoo,
+                    hTattoo,
+                    hTerminoTattoo,
+                    observacoes,
+                    fotoReferencia,
+                    status: "Agendado",
+                    tipoTattoo,
+                    idAdmin
+                });
+    
+                // Atualizar na tabela 'agendaconsulta'
+                await db('agendaconsulta').where({ id: idTatuagem }).update({ status: "Agendado" });
+    
+                res.status(201).json({ id, message: 'Tatuagem marcada com sucesso.' });
+            } else {
+                // Apenas atualizar na tabela 'agendaconsulta'
+                await db('agendaconsulta').where({ id: idTatuagem }).update({ status: "Cancelado" });
+    
+                res.status(201).json({ message: 'Tatuagem cancelada com sucesso.' });
+            }
+        } catch (err) {
+            console.error('Erro ao processar agendamento: ', err);
+            res.status(500).json({ message: 'Erro ao processar agendamento.' });
         }
     },
+    
 
     async updateAgenda(req, res){
         const { id } = req.params;

@@ -3,8 +3,26 @@ const moment = require('moment');
 
 module.exports = {
     async getAllAgendaConsulta(req, res){
+        const {id} = req.params;
         try{
-            const agenda = await db('agendaconsulta').select('*');
+            const agenda = await db('agendaconsulta')
+                .where({idCliente: id})
+                .orderByRaw("CASE WHEN status = 'Agendado' or status = 'Cancelado' THEN 0 ELSE 1 END")
+                .select('*');
+
+            res.status(200).json(agenda);
+
+        }catch(err){
+            console.error('Erro ao buscar as tatuagens pendetes: ', err);
+            res.status(500).json({message: "Erro ao buscar as tatuagens pendentes"});
+        }
+    },
+
+    async getAllAgendaConsultaClientes(req, res){
+        
+        try{
+            const agenda = await db('agendaconsulta').select('*').where({status: "Pendente"});
+
             res.status(200).json(agenda);
 
         }catch(err){
