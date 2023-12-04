@@ -1,4 +1,46 @@
 const db = require('../database/db');
+const PDFDocument = require ('pdfkit');
+const QRCode =  require ('qrcode');
+const nodemailer = require ('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'think.studio.tattoo@gmail.com',
+        pass: 'jsbgujwyvxfapzvq'
+    }
+})
+
+async function sendEmail(destinatario, qrCodeDataUrl){
+    
+    const mailOptions = {
+        from: 'think.studio.tattoo@gmail.com',
+        to: destinatario,
+        subject: 'QRCode para sua consulta de tatuagem',
+        html: `
+            <div style="background-color: black; padding: 8px 20px; text-align: center;">
+                <h2 style="font-size: 24px; color: #fff; font-family: 'Baloo', sans-serif; font-weight: 700;">Th<span style="color: #EB1CE4; font-weigth: bold;">Ink </span></h2>
+            </div>
+            <div style="padding: 20px;">
+                <p style="font-size: 16px;">Olá!</p>
+                <p style="font-size: 16px;">Esse é seu <strong style="color: #EB1CE4;">QRCode</strong> não esqueça de guardá-lo pois ele é único!</p>
+                <p>O <strong style="color: #EB1CE4;">ThINK</strong> agradece a sua preferência :)</p>
+            </div>
+        `,
+        attachments: [
+            {
+                filename: 'qrcode.png',
+                content: qrCodeDataUrl.split(';base64,').pop(),
+                encoding: 'base64',
+            },
+        ],
+    
+
+    };
+
+
+    await transporter.sendMail(mailOptions);
+}
 
 module.exports = {
     async getAllAgendas(req, res){
@@ -33,6 +75,12 @@ module.exports = {
     
         try {
             if (confirmaTattoo === "Aceitar") {
+                //Gerar código aleatório para QRCode
+                const codigoAleatorio = Math.floor(1000 + Math.random() * 9000).toString();
+
+                // Gerar o QRCode com base no código aleatório
+                const qrCodeDataUrl = await QRCode.toDataURL(codigoAleatorio);
+
                 // Inserir na tabela 'confirmaagenda'
                 const [id] = await db('confirmaagenda').insert({
                     idCliente,
@@ -47,11 +95,18 @@ module.exports = {
                     fotoReferencia,
                     status: "Agendado",
                     tipoTattoo,
-                    idAdmin
+                    idAdmin,
+                    qrCode: qrCodeDataUrl
                 });
     
                 // Atualizar na tabela 'agendaconsulta'
                 await db('agendaconsulta').where({ id: idTatuagem }).update({ status: "Agendado" });
+                const cliente = await db('cliente').select('email').where({ id: idCliente}).first();
+            
+                if (cliente && cliente.email) {
+                    //Enviar email com o QRCode anexado
+                    await sendEmail(cliente.email, qrCodeDataUrl);
+                }
     
                 res.status(201).json({ id, message: 'Tatuagem marcada com sucesso.' });
             } else {
