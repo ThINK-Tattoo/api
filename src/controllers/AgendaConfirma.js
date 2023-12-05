@@ -97,7 +97,7 @@ module.exports = {
                     fotoReferencia,
                     status: "Agendado",
                     tipoTattoo,
-                    idAdmin,
+                    idAdmin: 2,
                     qrCode: codigoAleatorio
                 });
     
