@@ -96,7 +96,7 @@ module.exports = {
                     status: "Agendado",
                     tipoTattoo,
                     idAdmin,
-                    qrCode: qrCodeDataUrl
+                    qrCode: codigoAleatorio
                 });
     
                 // Atualizar na tabela 'agendaconsulta'
