@@ -56,9 +56,9 @@ module.exports = {
 
     async createAgenda(req, res) {
         const { idTatuagem } = req.params; // id da consulta
-    
+        const idCliente = 4;
         const {
-            idCliente,
+            
             idAdmin,
             nomeCliente,
             tellCliente,
