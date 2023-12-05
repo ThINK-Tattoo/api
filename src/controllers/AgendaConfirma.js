@@ -45,7 +45,7 @@ async function sendEmail(destinatario, qrCodeDataUrl){
 module.exports = {
     async getAllAgendas(req, res){
         try{
-            const agenda = await db('confirmaagenda').select('*');
+            const agenda = await db('confirmaAgenda').select('*');
             res.status(200).json(agenda);
 
         }catch(err){
@@ -82,7 +82,7 @@ module.exports = {
                 const qrCodeDataUrl = await QRCode.toDataURL(codigoAleatorio);
 
                 // Inserir na tabela 'confirmaagenda'
-                const [id] = await db('confirmaagenda').insert({
+                const [id] = await db('confirmaAgenda').insert({
                     idCliente,
                     nomeCliente,
                     tellCliente,
@@ -100,7 +100,7 @@ module.exports = {
                 });
     
                 // Atualizar na tabela 'agendaconsulta'
-                await db('agendaconsulta').where({ id: idTatuagem }).update({ status: "Agendado" });
+                await db('agendaConsulta').where({ id: idTatuagem }).update({ status: "Agendado" });
                 const cliente = await db('cliente').select('email').where({ id: idCliente}).first();
             
                 if (cliente && cliente.email) {
@@ -111,7 +111,7 @@ module.exports = {
                 res.status(201).json({ id, message: 'Tatuagem marcada com sucesso.' });
             } else {
                 // Apenas atualizar na tabela 'agendaconsulta'
-                await db('agendaconsulta').where({ id: idTatuagem }).update({ status: "Cancelado" });
+                await db('agendaConsulta').where({ id: idTatuagem }).update({ status: "Cancelado" });
     
                 res.status(201).json({ message: 'Tatuagem cancelada com sucesso.' });
             }
