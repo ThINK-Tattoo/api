@@ -80,7 +80,7 @@ module.exports = {
 
                 // Gerar o QRCode com base no código aleatório
                 const qrCodeDataUrl = await QRCode.toDataURL(codigoAleatorio);
-
+                const formattedDate = dataTattoo.toISOString().split('T')[0];
                 // Inserir na tabela 'confirmaagenda'
                 const [id] = await db('confirmaAgenda').insert({
                     idCliente,
@@ -88,7 +88,7 @@ module.exports = {
                     tellCliente,
                     tamanhoTattoo,
                     estOrcamento,
-                    dataTattoo,
+                    dataTattoo: formattedDate,
                     hTattoo,
                     hTerminoTattoo,
                     observacoes,
