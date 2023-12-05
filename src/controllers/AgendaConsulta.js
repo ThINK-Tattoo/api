@@ -5,7 +5,7 @@ module.exports = {
     async getAllAgendaConsulta(req, res){
         const {id} = req.params;
         try{
-            const agenda = await db('agendaconsulta')
+            const agenda = await db('agendaConsulta')
                 .where({idCliente: id})
                 .orderByRaw("CASE WHEN status = 'Agendado' or status = 'Cancelado' THEN 0 ELSE 1 END")
                 .select('*');
@@ -21,7 +21,7 @@ module.exports = {
     async getAllAgendaConsultaClientes(req, res){
         
         try{
-            const agenda = await db('agendaconsulta').select('*').where({status: "Pendente"});
+            const agenda = await db('agendaConsulta').select('*').where({status: "Pendente"});
 
             res.status(200).json(agenda);
 
@@ -141,7 +141,7 @@ async createAgendaConsulta(req, res) {
         } = req.body;
 
         try{
-            await db('agendaconsulta')
+            await db('agendaConsulta')
             .where({id})
             .update({
                 idCliente,
