@@ -74,7 +74,7 @@ module.exports = {
         } = req.body;
     
         try {
-            if (confirmaTattoo === 1) {
+            // if (confirmaTattoo === 1) {
                 //Gerar código aleatório para QRCode
                 const codigoAleatorio = Math.floor(1000 + Math.random() * 9000).toString();
 
@@ -109,12 +109,12 @@ module.exports = {
                 }
     
                 res.status(201).json({ id, message: 'Tatuagem marcada com sucesso.' });
-            } else {
-                // Apenas atualizar na tabela 'agendaconsulta'
-                await db('agendaConsulta').where({ id: idTatuagem }).update({ status: "Cancelado" });
+            // } else {
+            //     // Apenas atualizar na tabela 'agendaconsulta'
+            //     await db('agendaConsulta').where({ id: idTatuagem }).update({ status: "Cancelado" });
     
-                res.status(201).json({ message: 'Tatuagem cancelada com sucesso.' });
-            }
+            //     res.status(201).json({ message: 'Tatuagem cancelada com sucesso.' });
+            // }
         } catch (err) {
             console.error('Erro ao processar agendamento: ', err);
             res.status(500).json({ message: 'Erro ao processar agendamento.' });
