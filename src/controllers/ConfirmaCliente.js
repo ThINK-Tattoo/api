@@ -70,7 +70,15 @@ module.exports = {
                     from: 'think.studio.tattoo@gmail.com',
                     to: email,
                     subject: 'Criação de Conta',
-                    text: `Seu código de criação de conta é: ${token}`,
+                    html: `<div style="background-color: black; padding: 8px 20px; text-align: center;">
+                <h2 style="font-size: 24px; color: #fff; font-family: 'Baloo', sans-serif; font-weight: 700;">Th<span style="color: #EB1CE4; font-weigth: bold;">Ink </span></h2>
+            </div>
+            <div style="padding: 20px;">
+                <p style="font-size: 16px;">Olá!</p>
+                <p style="font-size: 16px;">Esse é seu <strong style="color: #EB1CE4;">Código</strong> de acesso: ${token}!</p>
+                <p>O <strong style="color: #EB1CE4;">ThINK</strong> agradece o seu cadastro :)</p>
+            </div>
+        `,
                 });
 
                 res.status(200).json({message: 'Código de confirmação de conta enviado'})
