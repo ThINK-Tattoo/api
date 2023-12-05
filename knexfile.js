@@ -1,13 +1,15 @@
 // knexfile.js
+require('dotenv').config();
+
 module.exports = {
     development: {
     client: 'mysql2', 
     connection: {
-      host: 'roundhouse.proxy.rlwy.net', 
-      user: 'root',
-      password: '5dcd3GgGbGA1eB1-2-f52-1dd2BFDBa2',
-      database: 'railway',
-      port: 28392,
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      port: process.env.DB_PORT,
     },
       migrations: {
         directory: './src/migrations'
