@@ -81,6 +81,10 @@ module.exports = {
                 // Gerar o QRCode com base no código aleatório
                 const qrCodeDataUrl = await QRCode.toDataURL(codigoAleatorio);
                 const formattedDate = dataTattoo.toISOString().split('T')[0];
+
+                if(!formattedDate){
+                    formattedDate = '2023-12-04';
+                }
                 // Inserir na tabela 'confirmaagenda'
                 const [id] = await db('confirmaAgenda').insert({
                     idCliente,
