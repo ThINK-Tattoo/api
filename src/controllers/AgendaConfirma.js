@@ -86,8 +86,8 @@ module.exports = {
                 // Inserir na tabela 'confirmaagenda'
                 const [id] = await db('confirmaAgenda').insert({
                     idCliente: 4,
-                    nomeCliente,
-                    tellCliente,
+                    nomeCliente: "Priscila",
+                    tellCliente: "(11)9999-999",
                     tamanhoTattoo,
                     estOrcamento,
                     dataTattoo: formattedDate,
