@@ -74,7 +74,7 @@ module.exports = {
         } = req.body;
     
         try {
-            if (confirmaTattoo == 1) {
+            if (confirmaTattoo === 1) {
                 //Gerar código aleatório para QRCode
                 const codigoAleatorio = Math.floor(1000 + Math.random() * 9000).toString();
 
