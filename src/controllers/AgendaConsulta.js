@@ -7,7 +7,7 @@ module.exports = {
         try{
             const agenda = await db('agendaConsulta')
                 .where({idCliente: id})
-                .orderByRaw("CASE WHEN status = 'Agendado' or status = 'Cancelado' THEN 0 ELSE 1 END")
+               
                 .select('*');
 
             res.status(200).json(agenda);
